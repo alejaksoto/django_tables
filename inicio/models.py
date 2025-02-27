@@ -2,7 +2,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from empresas.models import Empresa
 
+class Roles(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.nombre
+    
 class Usuario(AbstractUser):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True, blank=True)  # Permitir NULL
     username = models.CharField(max_length=255, unique=True)
@@ -14,25 +20,14 @@ class Usuario(AbstractUser):
     fecha_update = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     password = models.CharField(max_length=255)
-    ROLES = [
-        ('super_admin', 'Super Admin'),
-        ('admin', 'Admin'),
-        ('staff', 'Staff'),
-    ]
-    rol = models.CharField(max_length=50, choices=ROLES, default='staff')
-    
+    roles = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
 
     def es_super_admin(self):
-        return self.rol == 'super_admin'
+        return self.rol and self.rol.nombre == 'super_admin'
 
     def es_admin(self):
-        return self.rol == 'admin'
-    
-    def tiene_permiso(self, permiso):
-        if self.rol and permiso in self.rol.permisos:
-            return self.rol.permisos[permiso]
-        return False
-    
+        return self.rol and self.rol.nombre == 'admin'
+
     def __str__(self):
         return self.username
 

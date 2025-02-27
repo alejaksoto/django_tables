@@ -8,8 +8,9 @@ class Empresa(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)
     direccion = models.TextField(null=True, blank=True)
-    fecha_update = models.DateTimeField(auto_now_add=True)
+    fecha_update = models.DateTimeField(auto_now=True)
     estado = models.CharField(max_length=255)
+    allocation_configuration_id = models.TextField(max_length=255,null=True, blank=True)
 
 class Credenciales_Empresa(models.Model):
     Empresa_id = models.ForeignKey(Empresa, on_delete=models.CASCADE)
@@ -20,7 +21,7 @@ class Credenciales_Empresa(models.Model):
     app_id = models.CharField(max_length=255, null=True, blank=True)  # Nuevo campo
     client_secret = models.CharField(max_length=255, null=True, blank=True)  # Nuevo campo
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_update = models.DateTimeField(auto_now_add=True)
+    fecha_update = models.DateTimeField(auto_now=True)
     business_id = models.CharField(max_length=255, unique=True)
 
 
