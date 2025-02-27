@@ -20,6 +20,4 @@ pip freeze > requirements.txt
 --comando para instalar los paquetes necesarios
 pip install -r requirements.txt
 instalación de mariadb: C:\Program Files\MariaDB 11.7\bin>
-Username: mayra.soto
-Email address: mayra.soto@claro.com.co
-Password: Claro2025*
+
