@@ -6,6 +6,7 @@ import logging
 from rest_framework import generics, status, response
 from django.views.decorators.csrf import csrf_exempt
 import requests
+import empresas
 
 logger = logging.getLogger(__name__)
 API_TOKEN ="7850AHMCUMROS792O012092928391" 
@@ -249,7 +250,7 @@ def register_company(request):
                 return JsonResponse({"error": "Faltan datos requeridos (companyName, webhookUrl, phoneNumber, clientId o clientSecret)."}, status=400)
 
             # Crear o actualizar el registro en el modelo
-            empresa, creado = Empresa.objects.update_or_create(
+            empresa, creado = empresas.objects.update_or_create(
                 nombre=company_name,
                 defaults={
                     'telefono': phone_number,
@@ -284,12 +285,12 @@ def exchange_token(request):
 
     # Obtener la empresa
     try:
-        empresa = Empresa.objects.get(nombre=company_name)
-    except Empresa.DoesNotExist:
+        empresa = empresas.objects.get(nombre=company_name)
+    except empresas.DoesNotExist:
         return JsonResponse({'error': f"No se encontró la empresa '{company_name}'."}, status=404)
 
     # Validar que la empresa tenga client_id y client_secret
-    if not empresa.client_id or not empresa.client_secret:
+    if not empresas.client_id or not empresa.client_secret:
         return JsonResponse({'error': 'La empresa no tiene configurados "client_id" o "client_secret".'}, status=400)
 
     url = 'https://graph.facebook.com/v21.0/oauth/access_token'
@@ -362,7 +363,7 @@ def register_phone_number(request):
 
     if response.status_code == 200:
         # Guardar el número de teléfono en el modelo Empresa
-        empresa, creado = Empresa.objects.update_or_create(
+        empresa, creado = empresas.objects.update_or_create(
             nombre=company_name,
             defaults={'telefono': phone_number_id}
         )
@@ -374,7 +375,7 @@ def register_phone_number(request):
         return JsonResponse({'error': response.json()}, status=response.status_code)
 
 # Vista para obtener datos del cliente
-def obtener_datos_cliente(request):
+""" def obtener_datos_cliente(request):
 
     business_token = request.GET.get('access_token')
     if not business_token:
@@ -395,7 +396,7 @@ def obtener_datos_cliente(request):
         email = data.get('email')  # Solo si está disponible
 
         # Guarda los datos en el modelo
-        cliente, creado = Empresa.objects.get_or_create(
+        cliente, creado = empresas.objects.get_or_create(
             whatsapp_id=whatsapp_id,
             defaults={
                 'nombre': nombre,
@@ -415,7 +416,7 @@ def obtener_datos_cliente(request):
         }})
     else:
         return JsonResponse({'error': response.json()}, status=response.status_code)
-
+ """
 #data adicional de los datos cliente 
 @csrf_exempt
 def guardar_datos_adicionales(request):
@@ -430,12 +431,12 @@ def guardar_datos_adicionales(request):
 
         # Actualiza el cliente
         try:
-            cliente = Empresa.objects.get(whatsapp_id=whatsapp_id)
+            cliente = empresas.objects.get(whatsapp_id=whatsapp_id)
             cliente.telefono = telefono
             cliente.direccion = direccion
             cliente.save()
             return JsonResponse({'success': True})
-        except Empresa.DoesNotExist:
+        except empresas.DoesNotExist:
             return JsonResponse({'error': 'Cliente no encontrado.'}, status=404)
     else:
         return JsonResponse({'error': 'Método no permitido.'}, status=405)
@@ -454,7 +455,7 @@ def process_signup_event(request):
                 waba_id = data.get('waba_id')
                 
                 # Crear o actualizar la empresa con estos datos
-                empresa, created = Empresa.objects.update_or_create(
+                empresa, created = empresas.objects.update_or_create(
                     telefono=phone_number_id,
                     defaults={'client_id': waba_id},
                 )
@@ -509,3 +510,4 @@ def meta_callback(request):
     except Exception as e:
         logger.error(f"Error en el callback de Meta: {str(e)}")
         return HttpResponse("Error interno del servidor.", status=500)
+    
