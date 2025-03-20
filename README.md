@@ -20,4 +20,11 @@ pip freeze > requirements.txt
 --comando para instalar los paquetes necesarios
 pip install -r requirements.txt
 instalación de mariadb: C:\Program Files\MariaDB 11.7\bin>
-
+--Comando para la imagen en docker
+docker build -t dockerfile .
+--comando para tagear la imagen
+docker tag dockerfile alejaksoto/dockerfile:latest
+--comando para hacer el cargue a docker hub
+docker push alejaksoto/dockerfile:latest
+--comando para ver los resultados del despliegue en la web app de azure
+az webapp log tail --name meta09 --resource-group "pruebas-ai-implementacion"
