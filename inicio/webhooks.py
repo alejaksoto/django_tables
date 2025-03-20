@@ -17,14 +17,16 @@ if not API_TOKEN:
     raise ValueError("La variable de entorno 'API_TOKEN' no está configurada.")
 
 # Vista para suscibir el webhook
-def subscribe_to_webhooks(request):
+def webhooks(request):
     if request.method != 'GET':
+        logging.warning("Método HTTP no permitido en subscribe_to_webhooks.")
         return JsonResponse({'error': 'Método no permitido. Solo se permite GET.'}, status=405)
 
     business_token = request.GET.get('business_token')  # Token del negocio
     waba_id = request.GET.get('waba_id')  # ID de la cuenta WABA
 
     if not business_token or not waba_id:
+        logging.error(f"Faltan parámetros: business_token={business_token}, waba_id={waba_id}")
         return JsonResponse({'error': 'Se requieren "business_token" y "waba_id".'}, status=400)
 
     url = f'https://graph.facebook.com/v21.0/{waba_id}/subscribed_apps'
@@ -32,16 +34,18 @@ def subscribe_to_webhooks(request):
         'Authorization': f'Bearer {business_token}',
     }
 
+    logging.debug(f"Enviando solicitud POST a {url} con headers={headers}")
     try:
         response = requests.post(url, headers=headers)
         response.raise_for_status()  # Lanza una excepción si el código de estado no es 2xx
+        logging.info("Webhook suscrito exitosamente.")
         return JsonResponse({'success': True})
     except requests.RequestException as e:
         logging.error(f"Error al suscribir el webhook: {e}")
         return JsonResponse({'error': 'Error al suscribir el webhook.'}, status=500)
 
 @csrf_exempt
-def whatsapp_webhook(request):
+def webhook(request):
     if request.method == 'POST':
         try:
             body = json.loads(request.body)

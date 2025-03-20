@@ -73,21 +73,24 @@ def whatsapp_verify(request):
     :return: HttpResponse con el reto de verificación o un mensaje de error.
     """
     try:
+        logging.debug("Iniciando verificación de WhatsApp.")
         accessToken = "7850AHMCUMROS792O012092928391"  # Ejemplo; NO usar tokens sensibles directamente en el código.
         token = request.GET.get("hub.verify_token")
         challenge = request.GET.get("hub.challenge")
         
+        logging.debug(f"Parámetros recibidos: token={token}, challenge={challenge}")
         if token and challenge and token == accessToken:
+            logging.info("Verificación de WhatsApp exitosa.")
             return HttpResponse(challenge)
 
         if token == accessToken:
-            logger.info("Verificación de WhatsApp exitosa.")
+            logging.info("Token válido, devolviendo challenge.")
             return HttpResponse(challenge)
         else:
-            logger.warning("Token de verificación no válido.")
+            logging.warning("Token de verificación no válido.")
             return HttpResponse("Token de verificación no válido.", status=403)
     except Exception as e:
-        logger.error(f"Error inesperado en la verificación de WhatsApp: {str(e)}")
+        logging.error(f"Error inesperado en la verificación de WhatsApp: {str(e)}")
         return HttpResponse("Error interno del servidor.", status=500)
 
 # Vista para procesar mensajes entrantes de WhatsApp y responder con el servicio GPT y utilidades adicionales.
@@ -447,4 +450,4 @@ def meta_callback(request):
     except Exception as e:
         logger.error(f"Error en el callback de Meta: {str(e)}")
         return HttpResponse("Error interno del servidor.", status=500)
-    
+
