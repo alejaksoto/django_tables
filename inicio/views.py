@@ -316,29 +316,6 @@ def exchange_token(request):
         })
     else:
         return JsonResponse({'error': response.json()}, status=response.status_code)
-
-
-# Vista para suscibir el webhoohk
-def subscribe_to_webhooks(request):
-    business_token = request.GET.get('business_token')  # Token del negocio
-    waba_id = request.GET.get('waba_id')  # ID de la cuenta WABA
-
-    if not business_token or not waba_id:
-        return JsonResponse({'error': 'Se requieren "business_token" y "waba_id".'}, status=400)
-
-    url = f'https://graph.facebook.com/v21.0/{waba_id}/subscribed_apps'
-    headers = {
-        'Authorization': f'Bearer {business_token}',
-    }
-
-    response = requests.post(url, headers=headers)
-
-    if response.status_code == 200:
-        return JsonResponse({'success': True})
-    else:
-        return JsonResponse({'error': response.json()}, status=response.status_code)
-
-
 # Vista para registrar un número de teléfono del cliente en mi bd
 def register_phone_number(request):
     access_token = request.GET.get('access_token')  # Token del negocio
