@@ -12,6 +12,8 @@ import os
 load_dotenv()
 API_TOKEN = os.getenv('API_TOKEN')
 
+
+
 # Validar que API_TOKEN esté configurado
 if not API_TOKEN:
     raise ValueError("La variable de entorno 'API_TOKEN' no está configurada.")
