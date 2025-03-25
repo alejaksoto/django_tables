@@ -10,7 +10,7 @@ import empresas
 
 logger = logging.getLogger(__name__)
 API_TOKEN ="7850AHMCUMROS792O012092928391" 
-appId: '530977999838510'
+appId="530977999838510"
 # Vista para renderizar la página principal
 # Devuelve la plantilla de la página de inicio o un error en caso de fallo.
 def home(request):
@@ -190,6 +190,11 @@ def send_message_view(request):
     phone_number = "phoneNumber"
     phone_id = "clientId"
     api_token = "clientSecret"
+
+    # Define or import send_welcome_message before using it
+    def send_welcome_message(phone_number, phone_id, api_token):
+        # Example implementation, replace with actual logic
+        return {"success": True, "data": {"phone_number": phone_number, "phone_id": phone_id}}
 
     result = send_welcome_message(phone_number, phone_id, api_token)
     
