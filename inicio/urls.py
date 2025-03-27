@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views,webhooks
+from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -11,6 +11,6 @@ urlpatterns = [
     path('register-phone/', views.register_phone_number, name='register_phone_number'),
     path('process_signup_event/', views.process_signup_event, name='process_signup_event'),
     path('meta-callback/', views.meta_callback, name='meta_callback'),
-    path('webhooks', webhooks.webhooks, name='webhooks'),
-    path('webhook', webhooks.webhook, name='webhook'),
+    #path('webhooks', webhooks.webhooks, name='webhooks'),
+    #path('webhook', webhooks.webhook, name='webhook'),
 ]
